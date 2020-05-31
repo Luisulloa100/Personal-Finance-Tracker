@@ -2,10 +2,15 @@
 #include <ctime>
 #include <fstream>
 #include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
 const time_t t = time(0);
 const tm *ltm = localtime(&t);
+void printDate()
+{
+  cout<< "Todays date: " << 1 + ltm->tm_mon << "/" << ltm->tm_mday << "/" <<1900+ltm->tm_year ;
+}
 
 struct entry
 {
@@ -13,19 +18,22 @@ struct entry
   string date;
   float amount;
 
+  entry();
   entry(string n, string d, float amnt);
 };
+
+entry::entry()
+{
+  name = "n/a";
+  date = "0/0/0";
+  amount = 0;
+}
 
 entry::entry(string n, string d, float amnt)
 {
   name = n;
   date = d;
   amount = amnt;
-}
-
-void printDate()
-{
-  cout<< "Todays date: " << 1 + ltm->tm_mon << "/" << ltm->tm_mday << "/" <<1900+ltm->tm_year ;
 }
 
 string getMonth(int month)//given a  number 1-12 return coresponding month name
@@ -77,7 +85,7 @@ void initFile(string name)
     {
       string name,date;
       float income;
-      cout<<"\n\n\t\tLogging this months entries.\nEnter the name (MAX ONE WORD), date, and amount then move on to the next.\nWhen done enter a dash \"-\" as the name and press enter."<<endl;
+      cout<<"\n\n\t\tLogging this months entries.\nEnter the name (ONE WORD), date, and amount then move on to the next.\nWhen done enter a dash \"-\" as the name and press enter."<<endl;
       cout<<"\nSample Entries:\nName: myjob\t\tstorename\nDate: 6/15/20\t\t6/15/20\nAmount: 123.456\t\t12.34\n\n\t"<<month;
       int done = 0;
       do{
@@ -100,10 +108,42 @@ void initFile(string name)
   }
 }
 
+
+void readFile(string fname, vector<entry>& vect)
+{
+  ifstream fin;
+  fin.open(fname);
+  string name;
+  string date;
+  float amount;
+  string lineRead;
+
+  getline(fin,lineRead);
+  int month = 0;
+  while(month != 1 + ltm->tm_mon)//get to current month in text file
+  {
+    getline(fin,lineRead);
+    if(lineRead.length() == 3)
+    month++;
+  }
+  getline(fin,lineRead);
+  while(lineRead.length() != 0)//read all entries for the month
+  {//read string into corresponding variables
+    stringstream ss;
+    ss<<lineRead;
+    ss>>name;
+    ss>>date;
+    ss>>amount;
+    entry input(name,date,amount);
+    vect.push_back(input);
+    getline(fin,lineRead);
+  }
+}
+
 /********************
 Open txt files if they exist and collect informatoin, if not then initialize new files
 ********************/
-void openTextFiles(vector<float> income,vector<float> expense)
+void openTextFiles(vector<entry> income,vector<entry> expense)
 {
   ifstream fin;
   string fileName;//name of file to be opened
@@ -114,10 +154,15 @@ void openTextFiles(vector<float> income,vector<float> expense)
   //hard code file name for testing
   //fileName = "income.txt";
   fin.open(fileName);
-  if(getline(fin,fileStart))//if file was opened then read
+  if(fin.is_open())//if file was opened then read
   {
-    cout<<fileStart<<" opened"<<endl;
-    //readFile(income);
+    readFile(fileName,income);
+    /*cout<<"\nIncome Vector\n";
+    for(int i = 0;i < income.size();i++)
+    {
+      cout<<income[i].name<<income[i].date<<income[i].amount<<endl;
+    }*/
+    cout<<fileName<<" processed.\n";
   }
   else//initialize file
   {
@@ -125,16 +170,21 @@ void openTextFiles(vector<float> income,vector<float> expense)
     initFile(fileName);
   }
   fin.close();
-  cin.ignore(10000,'\n');
+
   cout<<"\nWhat is the name of your expense file? ";
   getline(cin,fileName);
   //hard code file name for testing
   //fileName = "expense.txt";
   fin.open(fileName);
-  if(getline(fin,fileStart))//if file was opened then read
+  if(fin.is_open())//if file was opened then read
   {
-    cout<<fileStart<<" opened"<<endl;
-    //readFile();
+    readFile(fileName,expense);
+    /*cout<<"\nExpense Vector\n";
+    for(int i = 0;i < expense.size();i++)
+    {
+      cout<<expense[i].name<<expense[i].date<<expense[i].amount<<endl;
+    }*/
+    cout<<fileName<<" processed.\n";
   }
   else//initialize file
   {
@@ -146,8 +196,8 @@ void openTextFiles(vector<float> income,vector<float> expense)
 
 int main()
 {
-  vector<float> income;//store income values
-  vector<float> expense;//store expense values
+  vector<entry> income;//store income values
+  vector<entry> expense;//store expense values
 
   printDate();
   cout<<"\nWelcome, lets begin tracking your finances!\n"<<endl;
