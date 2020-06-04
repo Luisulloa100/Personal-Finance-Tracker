@@ -7,6 +7,7 @@ using namespace std;
 
 const time_t t = time(0);
 const tm *ltm = localtime(&t);
+const int currMonth = 1 + ltm->tm_mon;
 void printDate()
 {
   cout<< "Todays date: " << 1 + ltm->tm_mon << "/" << ltm->tm_mday << "/" <<1900+ltm->tm_year ;
@@ -149,7 +150,8 @@ void openTextFiles(vector<entry> income,vector<entry> expense)
   string fileName;//name of file to be opened
   string fileStart;
 
-  cout<<"What is the name of your income file? ";
+  cin.ignore();
+  cout<<"\nWhat is the name of your income file? ";
   getline(cin,fileName);
   //hard code file name for testing
   //fileName = "income.txt";
@@ -160,49 +162,89 @@ void openTextFiles(vector<entry> income,vector<entry> expense)
     /*cout<<"\nIncome Vector\n";
     for(int i = 0;i < income.size();i++)
     {
-      cout<<income[i].name<<income[i].date<<income[i].amount<<endl;
-    }*/
-    cout<<fileName<<" processed.\n";
-  }
-  else//initialize file
-  {
-    cout<<"\nIncome file does not exist, lets initialize your income file\n";
-    initFile(fileName);
-  }
-  fin.close();
+    cout<<income[i].name<<income[i].date<<income[i].amount<<endl;
+  }*/
+  cout<<fileName<<" processed.\n";
+}
+else//initialize file
+{
+  cout<<"\nIncome file does not exist, lets initialize an income file\n";
+  initFile(fileName);
+}
+fin.close();
 
-  cout<<"\nWhat is the name of your expense file? ";
-  getline(cin,fileName);
-  //hard code file name for testing
-  //fileName = "expense.txt";
-  fin.open(fileName);
-  if(fin.is_open())//if file was opened then read
+cout<<"\nWhat is the name of your expense file? ";
+getline(cin,fileName);
+//hard code file name for testing
+//fileName = "expense.txt";
+fin.open(fileName);
+if(fin.is_open())//if file was opened then read
+{
+  readFile(fileName,expense);
+  /*cout<<"\nExpense Vector\n";
+  for(int i = 0;i < expense.size();i++)
   {
-    readFile(fileName,expense);
-    /*cout<<"\nExpense Vector\n";
-    for(int i = 0;i < expense.size();i++)
-    {
-      cout<<expense[i].name<<expense[i].date<<expense[i].amount<<endl;
-    }*/
-    cout<<fileName<<" processed.\n";
-  }
-  else//initialize file
-  {
-    cout<<"\nExpense file does not exist, lets initialize your expense file\n";
-    initFile(fileName);
-  }
-  fin.close();
+  cout<<expense[i].name<<expense[i].date<<expense[i].amount<<endl;
+}*/
+cout<<fileName<<" processed.\n";
+}
+else//initialize file
+{
+  cout<<"\nExpense file does not exist, lets initialize an expense file\n";
+  initFile(fileName);
+}
+fin.close();
 }
 
-int main()
+void monthMenu(int month)
 {
   vector<entry> income;//store income values
   vector<entry> expense;//store expense values
 
-  printDate();
-  cout<<"\nWelcome, lets begin tracking your finances!\n"<<endl;
+  openTextFiles(income,expense);
 
-  openTextFiles(income,expense);//open txt files and gather information
+
+}
+
+void progMenu()
+{
+  int option;
+
+  while(option != 0)
+  {
+    cout<<"\nWhat would you like to work on?\n";
+    cout<<"1. Current Months Budget\n";
+    cout<<"2. Specific months budghet\n";
+    cout<<"0. Exit\n";
+    cout<<"\nChoice: ";
+    cin>>option;
+
+    switch(option)
+    {
+      case 1:
+      monthMenu(currMonth);
+      break;
+      case 2:
+      int month;
+      cout<<"What month would you like to edit?";
+      cin>> month;
+      monthMenu(month);
+      break;
+      case 0:
+      break;
+      default:
+      cout<<option<<" is not an option please enter a valid option";
+      break;
+    }
+  }
+}
+
+int main()
+{
+  printDate();
+  cout<<"\nWelcome, lets begin tracking your finances!"<<endl;
+
+  progMenu();
 
   return 0;
 }
