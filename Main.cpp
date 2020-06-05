@@ -23,6 +23,31 @@ struct entry
   entry(string n, string d, float amnt);
 };
 
+struct month
+{
+  string name;
+  int num;
+  vector<entry> income;
+  vector<entry> expense;
+
+  month();
+  month(string m, int num, vector<entry> income, vector<entry> expense);
+};
+
+month::month()
+{
+  name = "n/a";
+  num = 0;
+}
+
+month::month(string m, int n, vector<entry> i, vector<entry> e)
+{
+  name = m;
+  num = n;
+  income = i;
+  expense = e;
+}
+
 entry::entry()
 {
   name = "n/a";
