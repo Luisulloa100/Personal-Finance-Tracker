@@ -20,7 +20,7 @@ struct entry
   float amount;
 
   entry();
-  entry(string n, string d, float amnt);
+  entry(string entryName, string entryDate, float entryAmnt);
 };
 
 struct month
@@ -31,7 +31,7 @@ struct month
   vector<entry> expense;
 
   month();
-  month(string m, int num, vector<entry> income, vector<entry> expense);
+  month(string monthName, int monthNum, vector<entry> incomeVect, vector<entry> expenseVect);
 };
 
 month::month()
@@ -40,12 +40,12 @@ month::month()
   num = 0;
 }
 
-month::month(string m, int n, vector<entry> i, vector<entry> e)
+month::month(string monthName, int monthNum, vector<entry> incomeVect, vector<entry> expenseVect)
 {
-  name = m;
-  num = n;
-  income = i;
-  expense = e;
+  name = monthName;
+  num = monthNum;
+  income = incomeVect;
+  expense = expenseVect;
 }
 
 entry::entry()
@@ -55,11 +55,11 @@ entry::entry()
   amount = 0;
 }
 
-entry::entry(string n, string d, float amnt)
+entry::entry(string entryName, string entryDate, float entryAmnt)
 {
-  name = n;
-  date = d;
-  amount = amnt;
+  name = entryName;
+  date = entryDate;
+  amount = entryAmnt;
 }
 
 string getMonth(int month)//given a  number 1-12 return coresponding month name
@@ -95,100 +95,108 @@ string getMonth(int month)//given a  number 1-12 return coresponding month name
   }
 }
 
-void initFile(string name)
+void initFile(string fName)
 {
+  cout<<"Initializing "<<fName<<endl;
   ofstream fout;
-  fout.open(name);
-  fout<<name;
-  cout<<"\t\t"<<name;
+  fout.open(fName);
+  fout<<fName;
+  /*
+  cout<<"\t\t"<<fName;
 
   int currMonth = 1 + ltm->tm_mon;//current month
   for(int i = 1; i <= 12; i++)//print empty months to the file
   {
-    string month = getMonth(i);
-    fout<<"\n"<<month;
-    if(i == currMonth)//when we reach curent month then ask for values to input
-    {
-      string name,date;
-      float income;
-      cout<<"\n\n\t\tLogging this months entries.\nEnter the name (ONE WORD), date, and amount then move on to the next.\nWhen done enter a dash \"-\" as the name and press enter."<<endl;
-      cout<<"\nSample Entries:\nName: myjob\t\tstorename\nDate: 6/15/20\t\t6/15/20\nAmount: 123.456\t\t12.34\n\n\t"<<month;
-      int done = 0;
-      do{
-        cout<<"\nName: ";
-        cin>>name;
-        if(name == "-")
-        {
-          done = 1;
-          break;
-        }
-        cout<<"Date: ";
-        cin>>date;
-        cout<<"Amount: ";
-        cin >> income;
+  string month = getMonth(i);
+  fout<<"\n"<<month;
+  if(i == currMonth)//when we reach curent month then ask for values to input
+  {
+  string name,date;
+  float income;
+  cout<<"\n\n\t\tLogging this months entries.\nEnter the name (ONE WORD), date, and amount then move on to the next.\nWhen done enter a dash \"-\" as the name and press enter."<<endl;
+  cout<<"\nSample Entries:\nName: myjob\t\tstorename\nDate: 6/15/20\t\t6/15/20\nAmount: 123.456\t\t12.34\n\n\t"<<month;
+  int done = 0;
+  do{
+  cout<<"\nName: ";
+  cin>>name;
+  if(name == "-")
+  {
+  done = 1;
+  break;
+}
+cout<<"Date: ";
+cin>>date;
+cout<<"Amount: ";
+cin >> income;
 
-        fout<<"\n"<<name<<" "<<date<<" "<<income;
-      }while(done != 1);
-    }
-    fout<<"\n";
-  }
+fout<<"\n"<<name<<" "<<date<<" "<<income;
+}while(done != 1);
+}
+fout<<"\n";
+}*/
 }
 
 
-void readFile(string fname, vector<entry>& vect)
+void readFile(string fName, vector<month> year)
 {
-  ifstream fin;
+  cout<<"Reading "<<fName;
+  /*  ifstream fin;
   fin.open(fname);
   string name;
   string date;
   float amount;
   string lineRead;
 
+  getline(fin,lineRead);//file header
+
+
   getline(fin,lineRead);
   int month = 0;
   while(month != 1 + ltm->tm_mon)//get to current month in text file
   {
-    getline(fin,lineRead);
-    if(lineRead.length() == 3)
-    month++;
-  }
   getline(fin,lineRead);
-  while(lineRead.length() != 0)//read all entries for the month
-  {//read string into corresponding variables
-    stringstream ss;
-    ss<<lineRead;
-    ss>>name;
-    ss>>date;
-    ss>>amount;
-    entry input(name,date,amount);
-    vect.push_back(input);
-    getline(fin,lineRead);
-  }
+  if(lineRead.length() == 3)
+  month++;
+}
+getline(fin,lineRead);
+while(lineRead.length() != 0)//read all entries for the month
+{//read string into corresponding variables
+stringstream ss;
+ss<<lineRead;
+ss>>name;
+ss>>date;
+ss>>amount;
+entry input(name,date,amount);
+vect.push_back(input);
+getline(fin,lineRead);
+}*/
 }
 
 /********************
-Open txt files if they exist and collect informatoin, if not then initialize new files
+Open txt file if it exists and collect informatoin, if not initialize new file
 ********************/
-void openTextFiles(vector<entry> income,vector<entry> expense)
+void openTextFile(string fileType, vector<month> monthVect)
 {
   ifstream fin;
   string fileName;//name of file to be opened
   string fileStart;
 
-  cin.ignore();
-  cout<<"\nWhat is the name of your income file? ";
+  cout<<"\nWhat is the name of your "<<fileType<<" file? ";
   getline(cin,fileName);
+  fileName += ".txt";
   //hard code file name for testing
-  //fileName = "income.txt";
+  //fileName = (fileType +".txt");
   fin.open(fileName);
   if(fin.is_open())//if file was opened then read
   {
-    readFile(fileName,income);
-    /*cout<<"\nIncome Vector\n";
+    readFile(fileName,monthVect);
+    /*
+    cout<<"\nIncome Vector\n";
     for(int i = 0;i < income.size();i++)
     {
     cout<<income[i].name<<income[i].date<<income[i].amount<<endl;
-  }*/
+  }
+  */
   cout<<fileName<<" processed.\n";
 }
 else//initialize file
@@ -197,38 +205,17 @@ else//initialize file
   initFile(fileName);
 }
 fin.close();
-
-cout<<"\nWhat is the name of your expense file? ";
-getline(cin,fileName);
-//hard code file name for testing
-//fileName = "expense.txt";
-fin.open(fileName);
-if(fin.is_open())//if file was opened then read
-{
-  readFile(fileName,expense);
-  /*cout<<"\nExpense Vector\n";
-  for(int i = 0;i < expense.size();i++)
-  {
-  cout<<expense[i].name<<expense[i].date<<expense[i].amount<<endl;
-}*/
-cout<<fileName<<" processed.\n";
-}
-else//initialize file
-{
-  cout<<"\nExpense file does not exist, lets initialize an expense file\n";
-  initFile(fileName);
-}
-fin.close();
 }
 
-void monthMenu(int month)
+void monthMenu(int monthNum)
 {
-  vector<entry> income;//store income values
-  vector<entry> expense;//store expense values
+  vector<month> year;
 
-  openTextFiles(income,expense);
-
-
+  cin.ignore();
+  string txtFileType = "income";
+  openTextFile(txtFileType,year);
+  txtFileType = "expense";
+  openTextFile(txtFileType,year);
 }
 
 void progMenu()
@@ -239,7 +226,7 @@ void progMenu()
   {
     cout<<"\nWhat would you like to work on?\n";
     cout<<"1. Current Months Budget\n";
-    cout<<"2. Specific months budghet\n";
+    cout<<"2. Specific Months Budget\n";
     cout<<"0. Exit\n";
     cout<<"\nChoice: ";
     cin>>option;
